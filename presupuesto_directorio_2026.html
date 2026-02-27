@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Modelo Directorio 2026 - Grupo Cosecha</title>
+<style>
+body{
+    font-family: Arial;
+    background:#f4f6f9;
+    padding:30px;
+}
+h1{
+    color:#1f3b4d;
+}
+.section{
+    background:white;
+    padding:20px;
+    margin-bottom:20px;
+    border-radius:8px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.1);
+}
+input{
+    padding:5px;
+    width:120px;
+}
+.result{
+    font-weight:bold;
+    color:#0b5e3c;
+}
+button{
+    padding:10px 20px;
+    background:#1f3b4d;
+    color:white;
+    border:none;
+    cursor:pointer;
+    margin-top:10px;
+}
+</style>
+</head>
+<body>
+
+<h1>Modelo Directorio 2026 - Grupo Cosecha</h1>
+
+<div class="section">
+<h3>Variables Productivas</h3>
+Cosecheros: <input type="number" id="cosecheros" value="35"><br><br>
+Productividad (maletas/día): <input type="number" id="prod" value="31"><br><br>
+Días cosecha mes: <input type="number" id="dias" value="25"><br><br>
+Kg por maleta: <input type="number" id="kg" value="20"><br><br>
+Maletas por bin: <input type="number" id="bin" value="31"><br>
+</div>
+
+<div class="section">
+<h3>Costos Laborales</h3>
+Jornal base: <input type="number" id="jornal" value="30000"><br><br>
+Cargas %: <input type="number" id="cargas" value="22"><br><br>
+ART %: <input type="number" id="art" value="10"><br><br>
+SAC %: <input type="number" id="sac" value="8.33"><br><br>
+Vacaciones %: <input type="number" id="vac" value="4"><br>
+</div>
+
+<div class="section">
+<h3>Costos Fijos Mensuales</h3>
+Transporte: <input type="number" id="transporte" value="3500000"><br><br>
+Administración: <input type="number" id="admin" value="1200000"><br><br>
+EPP: <input type="number" id="epp" value="350000"><br>
+</div>
+
+<div class="section">
+<h3>Impuestos y Precio</h3>
+IIBB %: <input type="number" id="iibb" value="6.5"><br><br>
+Salud Pública %: <input type="number" id="salud" value="2.5"><br><br>
+Ganancias %: <input type="number" id="gan" value="2"><br><br>
+Precio Venta TN: <input type="number" id="precio" value="65000"><br>
+</div>
+
+<button onclick="calcular()">Calcular</button>
+
+<div class="section">
+<h3>Resultados</h3>
+Maletas mensuales: <span class="result" id="maletas"></span><br><br>
+Toneladas mensuales: <span class="result" id="tn"></span><br><br>
+Costo laboral por TN: <span class="result" id="laboralTN"></span><br><br>
+Costo total TN: <span class="result" id="totalTN"></span><br><br>
+Margen por TN: <span class="result" id="margen"></span><br><br>
+Resultado mensual: <span class="result" id="resultado"></span><br><br>
+Punto de equilibrio (TN): <span class="result" id="equilibrio"></span>
+</div>
+
+<script>
+function calcular(){
+
+let cosecheros = parseFloat(document.getElementById("cosecheros").value);
+let prod = parseFloat(document.getElementById("prod").value);
+let dias = parseFloat(document.getElementById("dias").value);
+let kg = parseFloat(document.getElementById("kg").value);
+let jornal = parseFloat(document.getElementById("jornal").value);
+let cargas = parseFloat(document.getElementById("cargas").value);
+let art = parseFloat(document.getElementById("art").value);
+let sac = parseFloat(document.getElementById("sac").value);
+let vac = parseFloat(document.getElementById("vac").value);
+let transporte = parseFloat(document.getElementById("transporte").value);
+let admin = parseFloat(document.getElementById("admin").value);
+let epp = parseFloat(document.getElementById("epp").value);
+let iibb = parseFloat(document.getElementById("iibb").value);
+let salud = parseFloat(document.getElementById("salud").value);
+let gan = parseFloat(document.getElementById("gan").value);
+let precio = parseFloat(document.getElementById("precio").value);
+
+let maletas = cosecheros * prod * dias;
+let toneladas = (maletas * kg) / 1000;
+
+let costoJornalEmpresa = jornal * (1 + (cargas+art+sac+vac)/100);
+let costoLaboralMensual = costoJornalEmpresa * cosecheros * dias;
+let costoLaboralTN = costoLaboralMensual / toneladas;
+
+let costoFijoTN = (transporte + admin + epp) / toneladas;
+let costoDirectoTN = costoLaboralTN + costoFijoTN;
+
+let impuestosTN = costoDirectoTN * ((iibb+salud+gan)/100);
+let costoTotalTN = costoDirectoTN + impuestosTN;
+
+let margen = precio - costoTotalTN;
+let resultado = margen * toneladas;
+
+let puntoEquilibrio = (transporte+admin+epp) / margen;
+
+document.getElementById("maletas").innerText = maletas.toFixed(0);
+document.getElementById("tn").innerText = toneladas.toFixed(2);
+document.getElementById("laboralTN").innerText = "$ " + costoLaboralTN.toFixed(2);
+document.getElementById("totalTN").innerText = "$ " + costoTotalTN.toFixed(2);
+document.getElementById("margen").innerText = "$ " + margen.toFixed(2);
+document.getElementById("resultado").innerText = "$ " + resultado.toFixed(2);
+document.getElementById("equilibrio").innerText = puntoEquilibrio.toFixed(2);
+
+}
+</script>
+
+</body>
+</html>
